@@ -25,8 +25,8 @@ app.post('/files', hasAPIKey, function(req, res, next) {
   }
   //save fileId
   db.insert(newFile, function (err, newDoc) {
-    if (err) return next(err);
-    res.send({id:newFile._id});
+    if (err) return next(400, err);
+    res.send(200, {id:newFile._id});
   });
 });
 
@@ -37,9 +37,9 @@ app.post('/files', hasAPIKey, function(req, res, next) {
 app.get('/files/:fileid', hasAPIKey, function(req, res, next) {
   var fileid  = req.params.fileid;
   db.findOne({_id: fileid}, function (err, file) {
-    if (err) return next(err);
+    if (err) return next(400, err);
     res.contentType('application/json');
-    res.send(file);
+    res.send(200, file);
   });
 });
 
@@ -57,9 +57,9 @@ app.put('/files/:fileid/data', hasAPIKey, function(req, res, next) {
     if (err) return next(err);
     fileToWrite = filePath+file.name+'.'+file.extension;
     fs.writeFile(fileToWrite, content, function (err) {
-      if (err) return next(err);
+      if (err) return next(400, err);
       res.contentType('application/json');
-      res.send({msg:'success'});
+      res.send(200, {msg:'success'});
     });
   });
 });
@@ -77,9 +77,9 @@ app.get('/files/:fileid/data', hasAPIKey, function(req, res, next) {
     fileToRead = filePath+file.name+'.'+file.extension;
     fs.stat(fileToRead);
     fs.readFile(fileToRead, {encoding: 'utf-8'}, function(err, file){
-      if (err) return next(err);
+      if (err) return next(400, err);
       res.contentType(mime.lookup(fileToRead));
-      res.send({file:file});
+      res.send(200, {file:file});
     });
   });
 });
@@ -89,7 +89,7 @@ function hasAPIKey(req, res, next) {
   if (req.headers['x-api-key']) {
     return next();
   }
-  res.send(404);
+  res.send(401);
 }
 
 app.listen(18881);
