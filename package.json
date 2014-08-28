@@ -1,0 +1,23 @@
+{
+  "name": "TaskOne",
+  "version": "0.0.0",
+  "description": "Restful API app",
+  "main": "app.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "mocha --reporter spec test/test"
+  },
+  "author": "Eric Lamison",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.6.6",
+    "express": "^4.8.5",
+    "mime": "^1.2.11",
+    "nedb": "^0.11.0"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "mocha": "^1.21.4",
+    "superagent": "^0.18.2"
+  }
+}
