@@ -25,8 +25,8 @@ app.post('/files', hasAPIKey, function(req, res, next) {
   }
   //save fileId
   db.insert(newFile, function (err, newDoc) {
-    if (err) return next(400, err);
-    res.send(200, {id:newFile._id});
+    if (err) return res.status(400).end();
+    return res.status(200).send({id:newFile._id});
   });
 });
 
@@ -37,9 +37,9 @@ app.post('/files', hasAPIKey, function(req, res, next) {
 app.get('/files/:fileid', hasAPIKey, function(req, res, next) {
   var fileid  = req.params.fileid;
   db.findOne({_id: fileid}, function (err, file) {
-    if (err) return next(400, err);
+    if (err) return res.status(400).end();
     res.contentType('application/json');
-    res.send(200, file);
+    return res.status(200).send(file);
   });
 });
 
@@ -57,9 +57,9 @@ app.put('/files/:fileid/data', hasAPIKey, function(req, res, next) {
     if (err) return next(err);
     fileToWrite = filePath+file.name+'.'+file.extension;
     fs.writeFile(fileToWrite, content, function (err) {
-      if (err) return next(400, err);
+      if (err) return res.status(400).end();
       res.contentType('application/json');
-      res.send(200, {msg:'success'});
+      return res.status(200).send({msg:'success'});
     });
   });
 });
@@ -73,7 +73,7 @@ app.get('/files/:fileid/data', hasAPIKey, function(req, res, next) {
   var filePath = __dirname + '/data/';
   var fileToRead;
   db.findOne({_id: fileid}, function (err, file) {
-    if (err) return next(err);
+    if (err || file === null) return res.status(403).end();
     fileToRead = filePath+file.name+'.'+file.extension;
     fs.stat(fileToRead);
     fs.readFile(fileToRead, {encoding: 'utf-8'}, function(err, file){
